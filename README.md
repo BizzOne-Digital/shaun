@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Monsterous Radio — Website
 
-## Getting Started
+> **Playin' Your Favorite Monster Hits!**
+> A cinematic, production-quality website for the international 24/7 online radio
+> station, built in the "Neo Broadcast Noir" visual direction.
 
-First, run the development server:
+Built with **Next.js (App Router) · TypeScript · Tailwind CSS 4 · Framer Motion · GSAP · Lenis · Lucide**.
+
+---
+
+## 1. Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # development → http://localhost:3000
+npm run lint       # ESLint
+npm run build      # production build
+npm run start      # serve the production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Node 18+ recommended.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 2. Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local` and fill in the values:
 
-## Learn More
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_RADIO_STREAM_URL` | **Direct** audio stream URL (MP3/AAC/HLS) from the streaming provider. Enables in-browser playback everywhere. |
+| `NEXT_PUBLIC_RADIO_METADATA_URL` | Optional now-playing metadata endpoint (e.g. Icecast `status-json.xsl`). |
+| `NEXT_PUBLIC_LEGACY_PLAYER_URL` | Optional legacy player embed URL — shown on /listen only when no direct stream URL exists. |
+| `RESEND_API_KEY` | [Resend](https://resend.com) API key for form email delivery. |
+| `CONTACT_TO_EMAIL` | Destination mailbox (defaults to `sbyoung1979@hotmail.com`). |
+| `CONTACT_FROM_EMAIL` | Verified sender address in Resend. |
 
-To learn more about Next.js, take a look at the following resources:
+**Without a stream URL** the site shows a graceful branded player state (no crash).
+**Without a Resend key** form submissions are logged to the server console and the
+visitor sees a success state with a mailto fallback — again, no crash.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 3. Stream URL Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+A webpage URL is **not** enough — you need the actual stream endpoint from the
+streaming provider (usually ends in `.mp3`, `.aac` or `/stream`). Add it as
+`NEXT_PUBLIC_RADIO_STREAM_URL`, rebuild, and the persistent player, Listen Live page,
+homepage Live Now module and mobile menu all become playable instantly.
 
-## Deploy on Vercel
+## 4. Email Setup (Resend)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Create a Resend account and verify a sending domain.
+2. Set `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` (an address on the verified domain).
+3. All three forms (contact, advertising inquiry, newsletter) deliver through
+   `src/app/api/contact/route.ts`, which includes Zod validation, a honeypot field
+   and basic in-memory rate limiting.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 5. Media Kit Setup
+
+1. Place the approved PDF at `public/documents/monsterous-radio-media-kit.pdf`.
+2. In `src/config/siteConfig.ts` set `mediaKitAvailable: true`.
+   Until then, /media-kit elegantly disables the download and offers email requests.
+
+## 6. Where to Edit Content
+
+Everything editable lives in data/config files — no component changes needed:
+
+| File | Contains |
+| --- | --- |
+| `src/config/siteConfig.ts` | **All contact info**, tagline, socials, stream settings, ad-slot toggles, `showAdvertisingPrices`, media-kit flag, genres, stats. |
+| `src/data/schedule.ts` | Weekly schedule (Philippine Time) — confirmed against the client's official spreadsheet. |
+| `src/data/shows.ts` | Show catalog — names, genres, descriptions, air-time summaries, artwork colors. Drop real artwork in `public/shows/` and set `image:` per show. |
+| `src/data/articles.ts` | News & features articles (each becomes `/news/[slug]`). |
+| `src/data/advertising.ts` | Advertising formats. Add `price` fields + flip `showAdvertisingPrices` when the client approves one rate card. |
+
+### Business rules already applied
+
+- Uses temporary email `sbyoung1979@hotmail.com` (never `info@monsterousradio.com`).
+- No advertising prices published (old rate cards conflict).
+- No invented listener counts, DJs, testimonials or events.
+- No domain/DNS logic included.
+
+## 7. Advertising System
+
+Reusable components in `src/components/advertising/`:
+`<AdSlot />`, `<TopBannerAd />`, `<SidebarAd />`, `<PlayerAd />`, `<FooterAd />`,
+`<SponsorBadge />`, `<ShowSponsor />`.
+
+Each accepts a campaign object (image, alt, url, sponsor name, start/end dates,
+active flag). Empty slots show a premium "Advertise Here" placeholder or collapse —
+configured per slot in `siteConfig.adSlots`.
+
+## 8. Deployment
+
+The site is a standard Next.js app — Vercel is the easiest target:
+
+1. Push the repo to GitHub and import it in Vercel.
+2. Add the environment variables from section 2.
+3. Deploy. `sitemap.xml`, `robots.txt` and all metadata are generated automatically.
+
+For other hosts: `npm run build && npm run start` behind any Node-capable server.
+**Do not point the domain until the client approves the site** (per project rules).
+
+## 9. Project Structure
+
+```
+src/
+  app/            → routes (/, listen, shows, shows/[slug], news, news/[slug],
+                    advertise, media-kit, about, contact, privacy, terms,
+                    api/contact, sitemap, robots)
+  components/
+    advertising/  → ad slot system + placement preview
+    animations/   → intro overlay, reveals, waveform, equalizer, count-up, magnetic buttons
+    forms/        → contact, advertiser, newsletter + shared submit logic
+    layout/       → header, status strip, footer, page hero
+    news/         → news explorer, share buttons
+    player/       → persistent radio player + listen experience
+    schedule/     → interactive weekly schedule
+    shows/        → show cards
+    ui/           → show artwork generator, mascot, brand icons, section heading
+  config/         → siteConfig.ts (single source of truth)
+  data/           → schedule, shows, articles, advertising
+  lib/            → schedule/time utilities
+  providers/      → PlayerProvider (global audio), LenisProvider (smooth scroll)
+  types/          → shared TypeScript types
+public/
+  brand/  shows/  news/  studio/  sponsors/  documents/  social/
+```
