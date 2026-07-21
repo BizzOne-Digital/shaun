@@ -21,7 +21,7 @@ export const siteConfig = {
   contact: {
     phone: "(778) 239-8220",
     phoneHref: "tel:+17782398220",
-    email: "sbyoung1979@hotmail.com",
+    email: "sbyoung2000@gmail.com",
     emailAlt: "info@theoceanradio.com",
     hoursLabel: "24/7 Online Station",
     locationLabel: "Serving the Philippines and North America",

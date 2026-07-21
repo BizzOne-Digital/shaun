@@ -29,12 +29,17 @@ Copy `.env.example` to `.env.local` and fill in the values:
 | `NEXT_PUBLIC_RADIO_STREAM_URL` | **Direct** audio stream URL (MP3/AAC/HLS) from the streaming provider. Enables in-browser playback everywhere. |
 | `NEXT_PUBLIC_RADIO_METADATA_URL` | Optional now-playing metadata endpoint (e.g. Icecast `status-json.xsl`). |
 | `NEXT_PUBLIC_LEGACY_PLAYER_URL` | Optional legacy player embed URL — shown on /listen only when no direct stream URL exists. |
-| `RESEND_API_KEY` | [Resend](https://resend.com) API key for form email delivery. |
-| `CONTACT_TO_EMAIL` | Destination mailbox (defaults to `sbyoung1979@hotmail.com`). |
-| `CONTACT_FROM_EMAIL` | Verified sender address in Resend. |
+| `SMTP_HOST` | Gmail SMTP host (`smtp.gmail.com`). |
+| `SMTP_PORT` | `465` (SSL) or `587` (STARTTLS). |
+| `SMTP_SECURE` | `true` for port 465, `false` for 587. |
+| `SMTP_USER` | Full Gmail address used to authenticate. |
+| `SMTP_PASS` | Google **App Password** (not your normal Gmail password). |
+| `CONTACT_FROM_EMAIL` | Sender address — must match `SMTP_USER` for Gmail. |
+| `CONTACT_FROM_NAME` | Display name on outbound form emails. |
+| `CONTACT_TO_EMAIL` | Destination mailbox for form submissions. |
 
 **Without a stream URL** the site shows a graceful branded player state (no crash).
-**Without a Resend key** form submissions are logged to the server console and the
+**Without SMTP credentials** form submissions are logged to the server console and the
 visitor sees a success state with a mailto fallback — again, no crash.
 
 ## 3. Stream URL Setup
@@ -44,13 +49,31 @@ streaming provider (usually ends in `.mp3`, `.aac` or `/stream`). Add it as
 `NEXT_PUBLIC_RADIO_STREAM_URL`, rebuild, and the persistent player, Listen Live page,
 homepage Live Now module and mobile menu all become playable instantly.
 
-## 4. Email Setup (Resend)
+## 4. Email Setup (Gmail SMTP)
 
-1. Create a Resend account and verify a sending domain.
-2. Set `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` (an address on the verified domain).
-3. All three forms (contact, advertising inquiry, newsletter) deliver through
-   `src/app/api/contact/route.ts`, which includes Zod validation, a honeypot field
-   and basic in-memory rate limiting.
+1. On the sending Gmail account, turn on **2-Step Verification**.
+2. Create an [App Password](https://myaccount.google.com/apppasswords) (select
+   “Mail” / “Other” → name it e.g. `Monsterous Radio`).
+3. Copy `.env.example` → `.env.local` and set:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your.gmail@gmail.com
+SMTP_PASS=xxxx xxxx xxxx xxxx
+CONTACT_FROM_EMAIL=your.gmail@gmail.com
+CONTACT_FROM_NAME=Monsterous Radio Website
+CONTACT_TO_EMAIL=sbyoung2000@gmail.com
+```
+
+4. Restart `npm run dev` after changing env vars.
+5. All three forms (contact, advertising, newsletter) go through
+   `src/app/api/contact/route.ts` → `src/lib/mail.ts` (nodemailer), with Zod
+   validation, a honeypot field, and basic in-memory rate limiting.
+
+**Notes:** Gmail rate-limits App Passwords (~100–500 messages/day depending on
+account). For production volume, consider a dedicated transactional provider later.
 
 ## 5. Media Kit Setup
 
@@ -72,7 +95,7 @@ Everything editable lives in data/config files — no component changes needed:
 
 ### Business rules already applied
 
-- Uses temporary email `sbyoung1979@hotmail.com` (never `info@monsterousradio.com`).
+- Uses contact email `sbyoung2000@gmail.com` (never `info@monsterousradio.com`).
 - No advertising prices published (old rate cards conflict).
 - No invented listener counts, DJs, testimonials or events.
 - No domain/DNS logic included.

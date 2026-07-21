@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
+import { escapeHtml, isSmtpConfigured, sendMail } from "@/lib/mail";
 
 /**
  * Universal form endpoint (contact / advertising / newsletter).
- * Email delivery uses Resend when RESEND_API_KEY is configured;
- * otherwise submissions are logged server-side and the client is
- * told to fall back to mailto — the site never crashes.
+ * Delivers via Gmail SMTP (nodemailer) when SMTP_* env vars are set.
  */
 
 const baseSchema = z.object({
@@ -27,6 +26,8 @@ const baseSchema = z.object({
   company_website: z.string().max(0).optional().or(z.literal("")),
 });
 
+type FormData = z.infer<typeof baseSchema>;
+
 // ── Basic in-memory rate limiting (per server instance) ──────────
 const hits = new Map<string, { count: number; reset: number }>();
 const WINDOW_MS = 10 * 60 * 1000;
@@ -43,7 +44,13 @@ function rateLimited(ip: string): boolean {
   return entry.count > MAX_PER_WINDOW;
 }
 
-function buildEmailBody(data: z.infer<typeof baseSchema>): string {
+function subjectPrefix(formType: FormData["formType"]): string {
+  if (formType === "advertising") return "Advertising Inquiry";
+  if (formType === "newsletter") return "Newsletter Signup";
+  return "Website Contact";
+}
+
+function buildPlainBody(data: FormData): string {
   const lines = [
     `Form type: ${data.formType}`,
     `Name: ${data.name}`,
@@ -65,13 +72,58 @@ function buildEmailBody(data: z.infer<typeof baseSchema>): string {
   return lines.join("\n");
 }
 
+function buildHtmlBody(data: FormData): string {
+  const row = (label: string, value?: string | null) =>
+    value
+      ? `<tr>
+          <td style="padding:6px 12px 6px 0;color:#6b7280;vertical-align:top;white-space:nowrap;">${escapeHtml(label)}</td>
+          <td style="padding:6px 0;color:#111827;">${escapeHtml(value)}</td>
+        </tr>`
+      : "";
+
+  return `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:24px;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;">
+    <tr>
+      <td style="padding:20px 24px;background:#150920;color:#b6e51d;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">
+        Monsterous Radio · ${escapeHtml(subjectPrefix(data.formType))}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:24px;">
+        <table cellpadding="0" cellspacing="0" width="100%" style="font-size:14px;line-height:1.5;">
+          ${row("Name", data.name)}
+          ${row("Email", data.email)}
+          ${row("Phone", data.phone)}
+          ${row("Business", data.businessName)}
+          ${row("Website", data.website)}
+          ${row("Inquiry type", data.inquiryType)}
+          ${row("Subject", data.subject)}
+          ${row("Target audience", data.targetAudience)}
+          ${row("Preferred show", data.preferredShow)}
+          ${row("Campaign type", data.campaignType)}
+          ${row("Budget", data.budget)}
+          ${row("Start date", data.startDate)}
+        </table>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e5e7eb;">
+          <p style="margin:0 0 8px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;">Message</p>
+          <p style="margin:0;color:#111827;font-size:14px;white-space:pre-wrap;">${escapeHtml(data.message)}</p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     if (rateLimited(ip)) {
       return NextResponse.json(
         { ok: false, error: "Too many requests. Please try again later." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -80,7 +132,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.success) {
       return NextResponse.json(
         { ok: false, error: "Validation failed", issues: parsed.error.flatten().fieldErrors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -91,49 +143,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    const to = process.env.CONTACT_TO_EMAIL || "sbyoung1979@hotmail.com";
-    const from = process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
-
-    if (!apiKey) {
+    if (!isSmtpConfigured()) {
       console.warn(
-        "[Monsterous Radio] RESEND_API_KEY is not set — form submission logged only.\n" +
-          buildEmailBody(data)
+        "[Monsterous Radio] SMTP is not configured — form submission logged only.\n" +
+          buildPlainBody(data),
       );
       return NextResponse.json({ ok: true, delivered: false, fallback: true });
     }
 
-    const { Resend } = await import("resend");
-    const resend = new Resend(apiKey);
-    const subjectPrefix =
-      data.formType === "advertising"
-        ? "Advertising Inquiry"
-        : data.formType === "newsletter"
-          ? "Newsletter Signup"
-          : "Website Contact";
-
-    const { error } = await resend.emails.send({
-      from: `Monsterous Radio Website <${from}>`,
-      to: [to],
+    await sendMail({
+      subject: `${subjectPrefix(data.formType)}: ${data.subject || data.name}`,
+      text: buildPlainBody(data),
+      html: buildHtmlBody(data),
       replyTo: data.email,
-      subject: `${subjectPrefix}: ${data.subject || data.name}`,
-      text: buildEmailBody(data),
     });
-
-    if (error) {
-      console.error("[Monsterous Radio] Resend error:", error);
-      return NextResponse.json(
-        { ok: false, error: "Email delivery failed. Please email us directly." },
-        { status: 502 }
-      );
-    }
 
     return NextResponse.json({ ok: true, delivered: true });
   } catch (err) {
     console.error("[Monsterous Radio] Contact route error:", err);
     return NextResponse.json(
-      { ok: false, error: "Unexpected server error." },
-      { status: 500 }
+      { ok: false, error: "Email delivery failed. Please email us directly." },
+      { status: 502 },
     );
   }
 }
