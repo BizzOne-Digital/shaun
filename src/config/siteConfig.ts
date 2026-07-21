@@ -45,7 +45,30 @@ export const siteConfig = {
   stream: {
     streamUrl: process.env.NEXT_PUBLIC_RADIO_STREAM_URL || "",
     metadataUrl: process.env.NEXT_PUBLIC_RADIO_METADATA_URL || "",
-    legacyEmbedUrl: process.env.NEXT_PUBLIC_LEGACY_PLAYER_URL || "",
+    // Spacial SAM Cloud player iframe (from live monsterousradio.com)
+    legacyEmbedUrl:
+      process.env.NEXT_PUBLIC_LEGACY_PLAYER_URL ||
+      "https://samcloudmedia.spacial.com/webwidgets/player/v4/300x160.html?sid=119993&rid=246832&startstation=false&theme=light&showBuyButton=never&token=7c6731c912458b9e4c1fb7935f5efa65468d7ba6",
+  },
+
+  // ── Spacial / SAM Broadcaster Cloud widgets ────────────────────
+  // Playlist + (future) player/chat embeds from the station dashboard.
+  spacial: {
+    // Proxied via next.config rewrite → same-origin module loads for playlist/chat.
+    scriptUrl: "/spacial-widgets/sam-widgets.esm.js",
+    stationId: "119993",
+    token: "7c6731c912458b9e4c1fb7935f5efa65468d7ba6",
+    playlistId: "7b9cb77a-4311-4ffc-a0ea-abc0001e2c55",
+    playlistName: "Absolute Love Songs",
+    // Brand-aligned widget theme (purple / lime instead of default grey)
+    theme: {
+      backgroundTop: "#150920",
+      backgroundBottom: "#0d0911",
+      widgetBorder: "#53107a",
+      dividers: "#2a1538",
+      buttons: "#b6e51d",
+      text: "#f8f6fb",
+    },
   },
 
   // ── Advertising ────────────────────────────────────────────────

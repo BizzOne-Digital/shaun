@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Play, Pause, Loader2, Volume2, VolumeX, Share2, Check, CalendarDays, Smartphone, MonitorSpeaker } from "lucide-react";
+import {
+  Play,
+  Pause,
+  Loader2,
+  Volume2,
+  VolumeX,
+  Share2,
+  Check,
+  CalendarDays,
+  Smartphone,
+  MonitorSpeaker,
+} from "lucide-react";
 import { usePlayer } from "@/providers/PlayerProvider";
 import { Equalizer } from "@/components/animations/Equalizer";
 import { ShowArtwork } from "@/components/ui/ShowArtwork";
@@ -10,15 +21,20 @@ import { Reveal } from "@/components/animations/Reveal";
 import { formatTime } from "@/lib/scheduleUtils";
 import { siteConfig } from "@/config/siteConfig";
 import { SidebarAd } from "@/components/advertising";
+import {
+  SpacialPlayer,
+  SpacialPlaylist,
+  SpacialChat,
+} from "@/components/player/SpacialEmbeds";
 
 /** Immersive full-page listening experience for /listen. */
 export function ListenExperience() {
-  const { live, isPlaying, status, toggle, hasStream, volume, muted, setVolume, toggleMute, recent } = usePlayer();
+  const { live, isPlaying, status, toggle, hasStream, volume, muted, setVolume, toggleMute } =
+    usePlayer();
   const [shared, setShared] = useState(false);
   const current = live?.current;
   const next = live?.next;
   const volPercent = Math.round((muted ? 0 : volume) * 100);
-  const legacyEmbed = siteConfig.stream.legacyEmbedUrl;
 
   const share = async () => {
     const data = {
@@ -72,13 +88,10 @@ export function ListenExperience() {
                   ? `${formatTime(current.start)} – ${formatTime(current.end)} PHT · ${current.genre}`
                   : siteConfig.tagline}
               </p>
-              <p className="mt-1 text-xs text-muted/70">
-                Now playing: track metadata will appear when the stream feed is connected.
-              </p>
 
-              <div className="mt-7 flex flex-col items-center gap-5 sm:items-start">
-                <div className="flex items-center gap-5">
-                  {hasStream ? (
+              {hasStream && (
+                <div className="mt-7 flex flex-col items-center gap-5 sm:items-start">
+                  <div className="flex items-center gap-5">
                     <button
                       type="button"
                       onClick={toggle}
@@ -93,26 +106,20 @@ export function ListenExperience() {
                         <Play className="ml-1 h-8 w-8" aria-hidden="true" />
                       )}
                     </button>
-                  ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-line">
-                      <Play className="ml-1 h-8 w-8 text-muted" aria-hidden="true" />
-                    </div>
-                  )}
-                  <Equalizer playing={isPlaying} bars={16} height={40} color="var(--purple-bright)" />
-                </div>
-
-                {!hasStream && !legacyEmbed && (
-                  <p className="max-w-sm rounded-xl border border-line bg-surface/70 px-4 py-3 text-xs leading-relaxed text-muted">
-                    The live stream is being connected. Add{" "}
-                    <code className="text-lime">NEXT_PUBLIC_RADIO_STREAM_URL</code> to enable
-                    in-browser playback — the station itself is on air 24/7.
-                  </p>
-                )}
-
-                {hasStream && (
+                    <Equalizer playing={isPlaying} bars={16} height={40} color="var(--purple-bright)" />
+                  </div>
                   <div className="flex w-full max-w-xs items-center gap-3">
-                    <button type="button" onClick={toggleMute} aria-label={muted ? "Unmute" : "Mute"} className="text-muted hover:text-white">
-                      {muted || volume === 0 ? <VolumeX className="h-5 w-5" aria-hidden="true" /> : <Volume2 className="h-5 w-5" aria-hidden="true" />}
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      aria-label={muted ? "Unmute" : "Mute"}
+                      className="text-muted hover:text-white"
+                    >
+                      {muted || volume === 0 ? (
+                        <VolumeX className="h-5 w-5" aria-hidden="true" />
+                      ) : (
+                        <Volume2 className="h-5 w-5" aria-hidden="true" />
+                      )}
                     </button>
                     <input
                       type="range"
@@ -126,32 +133,35 @@ export function ListenExperience() {
                     />
                     <span className="w-9 text-right font-mono text-xs text-muted">{volPercent}%</span>
                   </div>
-                )}
+                </div>
+              )}
 
-                <button type="button" onClick={share} className="btn btn-ghost !px-4 !py-2 text-[0.65rem]">
-                  {shared ? <Check className="h-3.5 w-3.5 text-lime" aria-hidden="true" /> : <Share2 className="h-3.5 w-3.5" aria-hidden="true" />}
-                  {shared ? "Link Copied!" : "Share the Station"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={share}
+                className="btn btn-ghost mt-6 !px-4 !py-2 text-[0.65rem]"
+              >
+                {shared ? (
+                  <Check className="h-3.5 w-3.5 text-lime" aria-hidden="true" />
+                ) : (
+                  <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                {shared ? "Link Copied!" : "Share the Station"}
+              </button>
             </div>
           </div>
 
-          {/* Legacy embed fallback (controlled, optional) */}
-          {!hasStream && legacyEmbed && (
-            <div className="relative z-10 mt-8 overflow-hidden rounded-2xl border border-line">
-              <iframe
-                src={legacyEmbed}
-                title="Monsterous Radio legacy player"
-                className="h-40 w-full"
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin"
-              />
+          <div className="relative z-10 mt-8 overflow-hidden rounded-2xl border border-white/10 bg-[#150920]">
+            <p className="border-b border-white/10 px-4 py-2 text-[0.62rem] font-extrabold uppercase tracking-[0.22em] text-lime">
+              Live Player
+            </p>
+            <div className="p-3 sm:p-4">
+              <SpacialPlayer />
             </div>
-          )}
+          </div>
         </div>
       </Reveal>
 
-      {/* Sidebar */}
       <div className="space-y-6">
         <Reveal delay={0.1}>
           <div className="card-surface rounded-2xl p-6">
@@ -171,31 +181,39 @@ export function ListenExperience() {
             ) : (
               <p className="mt-4 text-sm text-muted">Loading schedule…</p>
             )}
-            <Link href="/shows" className="mt-4 inline-block text-xs font-bold uppercase tracking-[0.2em] text-lime hover:text-limesoft">
+            <Link
+              href="/shows"
+              className="mt-4 inline-block text-xs font-bold uppercase tracking-[0.2em] text-lime hover:text-limesoft"
+            >
               View Full Schedule →
             </Link>
           </div>
         </Reveal>
 
         <Reveal delay={0.15}>
-          <div className="card-surface rounded-2xl p-6">
-            <h3 className="text-[0.68rem] font-extrabold uppercase tracking-[0.25em] text-lime">
-              Recently Played
-            </h3>
-            {recent.length > 0 ? (
-              <ul className="mt-4 space-y-2 text-sm">
-                {recent.map((t, i) => (
-                  <li key={i} className="flex justify-between gap-3 text-muted">
-                    <span className="truncate text-white">{t.title}</span>
-                    <span className="shrink-0">{t.time}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm leading-relaxed text-muted">
-                Track history appears here once the metadata feed is connected.
-              </p>
-            )}
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#150920]">
+            <div className="border-b border-white/10 px-5 py-3">
+              <h3 className="text-[0.68rem] font-extrabold uppercase tracking-[0.25em] text-lime">
+                Playlist · {siteConfig.spacial.playlistName}
+              </h3>
+            </div>
+            <div className="p-3 sm:p-4">
+              <SpacialPlaylist />
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.18}>
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#150920]">
+            <div className="border-b border-white/10 px-5 py-3">
+              <h3 className="text-[0.68rem] font-extrabold uppercase tracking-[0.25em] text-lime">
+                Chat with the DJ
+              </h3>
+              <p className="mt-1 text-[0.65rem] text-muted">Send a message while you listen live.</p>
+            </div>
+            <div className="p-3 sm:p-4">
+              <SpacialChat />
+            </div>
           </div>
         </Reveal>
 
@@ -205,14 +223,14 @@ export function ListenExperience() {
               <Smartphone className="h-4 w-4 text-lime" aria-hidden="true" /> Listening on Mobile
             </h3>
             <p className="mt-3">
-              Tap play and keep browsing — the player stays with you across every page. For the
-              best experience use Chrome, Safari or Firefox with autoplay permitted for this site.
+              Use the live player above to tune in. For the best experience use Chrome, Safari or
+              Firefox.
             </p>
             <h3 className="mt-5 flex items-center gap-2 text-[0.68rem] font-extrabold uppercase tracking-[0.25em] text-white">
               <MonitorSpeaker className="h-4 w-4 text-lime" aria-hidden="true" /> Browser Support
             </h3>
             <p className="mt-3">
-              Monsterous Radio streams in modern HTML5 audio — no plugins needed. All current
+              Monsterous Radio streams via Spacial SAM Cloud — no plugins needed. All current
               desktop and mobile browsers are supported.
             </p>
           </div>
