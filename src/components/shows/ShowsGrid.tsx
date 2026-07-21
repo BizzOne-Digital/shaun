@@ -11,7 +11,7 @@ import type { DayKey } from "@/types";
 
 /** Featured show display meta (days + airtime shown on the cards). */
 const FEATURED: { slug: string; days: string; time: string }[] = [
-  { slug: "sunday-reggae-sunsplash", days: "Every Sunday", time: "9:00 AM – 4:00 PM" },
+  { slug: "sunday-reggae-sunsplash", days: "Every Sunday", time: "9:00 AM – 2:00 PM" },
   { slug: "lite-heart", days: "Daily", time: "3:00 AM – 6:00 AM" },
   { slug: "rock-this-time", days: "Nightly (except Friday)", time: "6:00 PM – 9:00 PM" },
   { slug: "the-daily-dose", days: "Mon–Thu & Saturday", time: "6:00 AM – 2:00 PM" },

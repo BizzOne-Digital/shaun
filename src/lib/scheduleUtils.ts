@@ -49,6 +49,7 @@ export interface ResolvedBlock extends ScheduleBlock {
   genre: string;
   tagline: string;
   slugExists: boolean;
+  image?: string;
   art: { from: string; to: string; accent: string; word: string; sub?: string };
 }
 
@@ -61,6 +62,7 @@ export function resolveBlock(block: ScheduleBlock): ResolvedBlock {
       genre: show.genre,
       tagline: show.tagline,
       slugExists: true,
+      image: show.image,
       art: show.art,
     };
   }

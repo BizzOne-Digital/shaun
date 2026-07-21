@@ -189,8 +189,10 @@ export function ScheduleExplorer() {
               </div>
               <ShowArtwork
                 art={block.art}
+                image={block.image}
                 name={block.name}
-                className="hidden h-16 w-16 rounded-xl sm:flex"
+                className="h-14 w-14 shrink-0 rounded-xl sm:h-16 sm:w-16"
+                sizes="64px"
               />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">

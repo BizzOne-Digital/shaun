@@ -39,7 +39,8 @@ export const shows: Show[] = [
     tagline: "Easy rock and relaxing favorites.",
     description:
       "Low Down keeps things smooth with easy rock and relaxing favorites. Whether it is late night or a mellow afternoon, Low Down is the wind-down soundtrack of Monsterous Radio.",
-    scheduleSummary: "Mon–Sat 12:00 AM – 3:00 AM · Mon–Thu & Sat 2:00 PM – 6:00 PM · Sun 4:00 PM – 6:00 PM",
+    scheduleSummary: "Mon–Sat 12:00 AM – 3:00 AM · Mon–Thu & Sat–Sun 2:00 PM – 6:00 PM",
+    image: "/shows/low-down.png",
     art: { from: "#2d1b4e", to: "#050407", accent: "#a82de0", word: "LOW", sub: "DOWN" },
   },
   {
@@ -73,8 +74,8 @@ export const shows: Show[] = [
     genres: ["Reggae", "Island", "Tropical", "Ska"],
     tagline: "Reggae, island, tropical and ska — every Sunday.",
     description:
-      "Sunday Reggae Sunsplash turns every Sunday into an island escape. Seven hours of reggae, tropical vibes, ska and sunshine rhythms to keep your weekend irie.",
-    scheduleSummary: "Sunday 9:00 AM – 4:00 PM",
+      "Sunday Reggae Sunsplash turns every Sunday into an island escape. Five hours of reggae, tropical vibes, ska and sunshine rhythms to keep your weekend irie.",
+    scheduleSummary: "Sunday 9:00 AM – 2:00 PM",
     image: "/shows/sunday-reggae.png",
     art: { from: "#1b8a3a", to: "#0a3d14", accent: "#f5e642", word: "SUNDAY", sub: "REGGAE" },
   },
@@ -87,6 +88,7 @@ export const shows: Show[] = [
     description:
       "When Saturday night hits, The Weekend Blow Out takes the controls. House, dance and party mixes carry the energy from Saturday night deep into Sunday morning.",
     scheduleSummary: "Saturday 9:00 PM – Sunday 3:00 AM (Saturday Night House Party)",
+    image: "/shows/the-weekend-blow-out.png",
     art: { from: "#a82de0", to: "#12041a", accent: "#b6e51d", word: "WEEKEND", sub: "BLOW OUT" },
   },
   {
@@ -98,6 +100,7 @@ export const shows: Show[] = [
     description:
       "Christian Contemporary closes out most evenings with uplifting contemporary Christian music — a peaceful, inspiring way to end the day, every day except Saturday.",
     scheduleSummary: "Every night except Saturday · 9:00 PM – 12:00 AM",
+    image: "/shows/christian-contemporary.png",
     art: { from: "#f8f6fb", to: "#6f1599", accent: "#050407", word: "CHRISTIAN", sub: "CONTEMPORARY" },
   },
 ];
