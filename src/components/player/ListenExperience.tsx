@@ -24,6 +24,7 @@ import { SidebarAd } from "@/components/advertising";
 import {
   SpacialPlayer,
   SpacialChat,
+  SpacialHistory,
 } from "@/components/player/SpacialEmbeds";
 
 /** Immersive full-page listening experience for /listen. */
@@ -186,6 +187,19 @@ export function ListenExperience() {
             >
               View Full Schedule →
             </Link>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.15}>
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#150920]">
+            <div className="border-b border-white/10 px-5 py-3">
+              <h3 className="text-[0.68rem] font-extrabold uppercase tracking-[0.25em] text-lime">
+                Recently Played
+              </h3>
+            </div>
+            <div className="p-3 sm:p-4">
+              <SpacialHistory />
+            </div>
           </div>
         </Reveal>
 

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { siteConfig } from "@/config/siteConfig";
 import { spacialThemeJson, useSpacialReady } from "@/components/player/useSpacialReady";
 
+type WidgetType = "player" | "playlist" | "chat" | "history";
 type WidgetAttrs = Record<string, string>;
 
 /**
@@ -15,7 +16,7 @@ function SpacialEmbed({
   attrs,
   minHeight = 160,
 }: {
-  type: "player" | "playlist" | "chat";
+  type: WidgetType;
   attrs: WidgetAttrs;
   minHeight?: number;
 }) {
@@ -136,6 +137,39 @@ export function SpacialChat({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
       <SpacialEmbed type="chat" attrs={attrs} minHeight={260} />
+    </div>
+  );
+}
+
+export function SpacialHistory({ className = "" }: { className?: string }) {
+  const { spacial } = siteConfig;
+  const attrs: WidgetAttrs = {
+    "station-id": spacial.stationId,
+    token: spacial.token,
+    "playlist-id": "undefined",
+    "anim-type": "focus-in-expand",
+    easing: "ease-in-out-back",
+    "refresh-interval": "30s",
+    "station-refresh-interval": "default",
+    "theme-border-radius": "square",
+    "image-border-radius": "square",
+    theme: JSON.stringify({
+      backgroundTop: "#474747",
+      backgroundBottom: "#5f5f5f",
+      widgetBorder: "#5f5f5f",
+      dividers: "#5f5f5f",
+      buttons: "#bebebe",
+      text: "#bebebe",
+    }),
+    "show-buy-button": "when populated",
+    "show-request-button": "true",
+    "show-cover-art": "true",
+    "history-limit": "6",
+  };
+
+  return (
+    <div className={className}>
+      <SpacialEmbed type="history" attrs={attrs} minHeight={280} />
     </div>
   );
 }
