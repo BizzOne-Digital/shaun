@@ -54,8 +54,8 @@ export const siteConfig = {
   // ── Spacial / SAM Broadcaster Cloud widgets ────────────────────
   // Playlist + (future) player/chat embeds from the station dashboard.
   spacial: {
-    // Proxied via next.config rewrite → same-origin module loads for playlist/chat.
-    scriptUrl: "/spacial-widgets/sam-widgets.esm.js",
+    // Load directly from Spacial CDN — same URL they provide in every widget snippet.
+    scriptUrl: "https://samcloudmedia.spacial.com/webwidgets/widget/v6/sam-widgets/sam-widgets.esm.js",
     stationId: "119993",
     token: "7c6731c912458b9e4c1fb7935f5efa65468d7ba6",
     playlistId: "7b9cb77a-4311-4ffc-a0ea-abc0001e2c55",

@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Same-origin proxy for Spacial widget chunks (avoids flaky cross-origin module loads).
+  // Rewrite kept for backwards-compat — Spacial script now loads directly from CDN.
   async rewrites() {
     return [
       {
