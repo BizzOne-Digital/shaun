@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/config/siteConfig";
 import { shows } from "@/data/shows";
 import { articles } from "@/data/articles";
+import { events } from "@/data/events";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url;
@@ -9,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/listen",
     "/shows",
+    "/events",
     "/news",
     "/advertise",
     "/media-kit",
@@ -37,5 +39,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...showRoutes, ...articleRoutes];
+  const eventRoutes = events.map((e) => ({
+    url: `${base}/events/${e.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...showRoutes, ...articleRoutes, ...eventRoutes];
 }

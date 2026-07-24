@@ -10,6 +10,7 @@ import { NewsletterForm } from "@/components/forms/NewsletterForm";
 const QUICK_LINKS = [
   { href: "/listen", label: "Listen Live" },
   { href: "/shows", label: "Shows & Schedule" },
+  { href: "/events", label: "Concerts & Events" },
   { href: "/news", label: "News & Features" },
   { href: "/advertise", label: "Advertise With Us" },
   { href: "/media-kit", label: "Media Kit" },
