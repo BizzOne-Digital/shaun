@@ -1,0 +1,52 @@
+.admin-root {
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+
+.admin-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.7rem 0.9rem;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.admin-input:focus {
+  outline: 2px solid rgba(182, 229, 29, 0.45);
+  outline-offset: 1px;
+}
+
+.admin-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #b6e51d;
+  color: #0d0911;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.25rem;
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+}
+
+.admin-card {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #12081a;
+  padding: 1.25rem;
+}

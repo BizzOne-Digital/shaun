@@ -16,6 +16,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/animations/Reveal";
 import { Waveform } from "@/components/animations/Waveform";
+import { getCmsPage, getSection } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -65,23 +66,27 @@ const REACH = [
   { icon: Users, value: "20–50", label: "Audience Age", sub: "music lovers & brands" },
 ];
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const page = await getCmsPage("about");
+  const hero = getSection(page, "hero");
+
   return (
     <>
-      {/* Hero — studio + mascot backdrop (place photo at public/studio/about-hero.png) */}
       <PageHero
         kicker="About Monsterous Radio"
-        title="About Us"
-        image="/studio/about-hero.png"
+        title={hero?.headline || "About Us"}
+        image={hero?.image || "/studio/about-hero.png"}
         imagePosition="object-[65%_center]"
       >
         <div className="mt-4">
           <p className="display text-xl tracking-wide text-lime sm:text-2xl">
-            Your Radio. Your Music. Your Community.
+            {hero?.subheadline || "Your Radio. Your Music. Your Community."}
           </p>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-            Monsterous Radio is an international online radio station bringing you the best mix of
-            music, shows and entertainment 24/7.
+            {hero?.body ||
+              "Monsterous Radio is an international online radio station bringing you the best mix of music, shows and entertainment 24/7."}
           </p>
         </div>
       </PageHero>

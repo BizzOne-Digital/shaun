@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Moon, Sparkles, Target, Users, RadioTower, Megaphone, ArrowRight } from "lucide-react";
-import { shows } from "@/data/shows";
+import { shows as staticShows } from "@/data/shows";
 import { schedule } from "@/data/schedule";
 import { formatTime, resolveBlock } from "@/lib/scheduleUtils";
 import { ShowArtwork } from "@/components/ui/ShowArtwork";
 import { PanelHeader } from "@/components/ui/PanelHeader";
 import { Reveal } from "@/components/animations/Reveal";
 import { SideRail } from "@/components/home/SideRail";
-import type { DayKey } from "@/types";
+import type { DayKey, Show } from "@/types";
 
 /** Featured show display meta (days + airtime shown on the cards). */
 const FEATURED: { slug: string; days: string; time: string }[] = [
@@ -20,7 +20,15 @@ const FEATURED: { slug: string; days: string; time: string }[] = [
 const FEATURED_SLUGS = new Set(FEATURED.map((f) => f.slug));
 
 /** Compact schedule-block card used inside the programming rows. */
-function BlockCard({ day, index }: { day: DayKey; index: number }) {
+function BlockCard({
+  day,
+  index,
+  shows,
+}: {
+  day: DayKey;
+  index: number;
+  shows: Show[];
+}) {
   const block = resolveBlock(schedule[day][index]);
   const show = shows.find((s) => s.slug === block.showSlug);
   const featured = FEATURED_SLUGS.has(block.showSlug);
@@ -67,7 +75,15 @@ function BlockCard({ day, index }: { day: DayKey; index: number }) {
   );
 }
 
-function ProgrammingRow({ label, day }: { label: string; day: DayKey }) {
+function ProgrammingRow({
+  label,
+  day,
+  shows,
+}: {
+  label: string;
+  day: DayKey;
+  shows: Show[];
+}) {
   return (
     <div>
       <p className="mb-2.5 flex items-center gap-2 text-[0.65rem] font-extrabold uppercase tracking-[0.22em] text-muted">
@@ -76,7 +92,7 @@ function ProgrammingRow({ label, day }: { label: string; day: DayKey }) {
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {schedule[day].map((_, i) => (
-          <BlockCard key={`${day}-${i}`} day={day} index={i} />
+          <BlockCard key={`${day}-${i}`} day={day} index={i} shows={shows} />
         ))}
       </div>
     </div>
@@ -88,7 +104,8 @@ function ProgrammingRow({ label, day }: { label: string; day: DayKey }) {
  * left — featured shows, weekday / Friday / weekend programming, advertise-by-show
  * strip · right — Top Hits, Listen Live promo, ad space.
  */
-export function ShowsGrid() {
+export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
+  const shows = showsProp?.length ? showsProp : staticShows;
   const featured = FEATURED.map((f) => ({
     ...f,
     show: shows.find((s) => s.slug === f.slug)!,
@@ -154,7 +171,7 @@ export function ShowsGrid() {
           <Reveal delay={0.05}>
             <PanelHeader title="Weekday Programming" sub="(Mon – Thu)" />
             <div className="mt-4">
-              <ProgrammingRow label="Monday to Thursday" day="monday" />
+              <ProgrammingRow label="Monday to Thursday" day="monday" shows={shows} />
             </div>
           </Reveal>
 
@@ -162,7 +179,7 @@ export function ShowsGrid() {
           <Reveal delay={0.05}>
             <PanelHeader title="Friday Programming" sub="(Golds all day)" />
             <div className="mt-4">
-              <ProgrammingRow label="Friday" day="friday" />
+              <ProgrammingRow label="Friday" day="friday" shows={shows} />
             </div>
           </Reveal>
 
@@ -170,8 +187,8 @@ export function ShowsGrid() {
           <Reveal delay={0.05}>
             <PanelHeader title="Weekend Programming" sub="(Sat – Sun)" />
             <div className="mt-4 space-y-6">
-              <ProgrammingRow label="Saturday" day="saturday" />
-              <ProgrammingRow label="Sunday" day="sunday" />
+              <ProgrammingRow label="Saturday" day="saturday" shows={shows} />
+              <ProgrammingRow label="Sunday" day="sunday" shows={shows} />
             </div>
           </Reveal>
 

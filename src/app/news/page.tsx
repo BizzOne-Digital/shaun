@@ -3,6 +3,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { NewsExplorer } from "@/components/news/NewsExplorer";
 import { SideRail } from "@/components/home/SideRail";
 import { siteConfig } from "@/config/siteConfig";
+import { getCmsPage, getSection } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "News & Features",
@@ -11,18 +12,26 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteConfig.url}/news` },
 };
 
-export default function NewsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function NewsPage() {
+  const page = await getCmsPage("news");
+  const hero = getSection(page, "hero");
+
   return (
     <>
       <PageHero
         kicker="Editorial"
-        title={
+        title={hero?.headline || (
           <>
             News &amp; <span className="text-gradient-lime">Features</span>
           </>
+        )}
+        description={
+          hero?.body ||
+          "Station updates, programming stories and music features from the Monsterous Radio team."
         }
-        description="Station updates, programming stories and music features from the Monsterous Radio team."
-        image="/studio/news-hero.png"
+        image={hero?.image || "/studio/news-hero.png"}
         imagePosition="object-[70%_22%]"
         compact
       />

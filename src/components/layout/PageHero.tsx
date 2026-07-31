@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { Stagger, StaggerItem } from "@/components/animations/Reveal";
 import { Waveform } from "@/components/animations/Waveform";
+import { resolveCmsImage } from "@/lib/cms/resolveImage";
 
 interface PageHeroProps {
   kicker: string;
@@ -9,7 +10,7 @@ interface PageHeroProps {
   description?: string;
   children?: ReactNode;
   compact?: boolean;
-  /** Optional full-bleed background photo (path under /public). */
+  /** Optional full-bleed background photo (path under /public or /api/uploads). */
   image?: string;
   /** Tailwind object-position class for the background photo. */
   imagePosition?: string;
@@ -25,19 +26,22 @@ export function PageHero({
   image,
   imagePosition = "object-[70%_center]",
 }: PageHeroProps) {
+  const resolvedImage = image ? resolveCmsImage(image) : undefined;
+
   return (
     <section
-      className={`${image ? "" : "noir-gradient"} grain relative overflow-hidden ${compact ? "pt-[140px] pb-10" : "pt-[160px] pb-16"}`}
+      className={`${resolvedImage ? "" : "noir-gradient"} grain relative overflow-hidden ${compact ? "pt-[140px] pb-10" : "pt-[160px] pb-16"}`}
     >
-      {image ? (
+      {resolvedImage ? (
         <div className="absolute inset-0" aria-hidden="true">
           <Image
-            src={image}
+            src={resolvedImage}
             alt=""
             fill
             priority
             sizes="100vw"
             className={`object-cover ${imagePosition}`}
+            unoptimized={resolvedImage.startsWith("/api/uploads/")}
           />
           {/* readability overlays — dark from the left, vignette top/bottom */}
           <div
@@ -72,7 +76,7 @@ export function PageHero({
           </StaggerItem>
           {description && (
             <StaggerItem>
-              <p className={`mt-5 max-w-2xl text-base leading-relaxed sm:text-lg ${image ? "text-white/80" : "text-muted"}`}>
+              <p className={`mt-5 max-w-2xl text-base leading-relaxed sm:text-lg ${resolvedImage ? "text-white/80" : "text-muted"}`}>
                 {description}
               </p>
             </StaggerItem>

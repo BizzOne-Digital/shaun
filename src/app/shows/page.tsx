@@ -6,8 +6,9 @@ import { ShowCard } from "@/components/shows/ShowCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Stagger, StaggerItem } from "@/components/animations/Reveal";
 import { TopBannerAd } from "@/components/advertising";
-import { shows } from "@/data/shows";
 import { siteConfig } from "@/config/siteConfig";
+import { getCmsPage, getCmsShows, getSection } from "@/lib/cms/content";
+import { resolveCmsImage } from "@/lib/cms/resolveImage";
 
 export const metadata: Metadata = {
   title: "Shows & Schedule",
@@ -16,19 +17,25 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteConfig.url}/shows` },
 };
 
-export default function ShowsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ShowsPage() {
+  const [page, shows] = await Promise.all([getCmsPage("shows"), getCmsShows()]);
+  const hero = getSection(page, "hero");
+  const heroImage = resolveCmsImage(hero?.image || "/studio/shows-hero.png", "/studio/shows-hero.png");
+
   return (
     <>
-      {/* ── HERO — live DJ arena backdrop ── */}
       <section className="relative overflow-hidden pt-[150px]" aria-label="Programming and shows">
         <div className="absolute inset-0" aria-hidden="true">
           <Image
-            src="/studio/shows-hero.png"
+            src={heroImage}
             alt=""
             fill
             priority
             sizes="100vw"
             className="object-cover object-[70%_center]"
+            unoptimized={heroImage.startsWith("/api/uploads/")}
           />
           {/* readability overlays — dark from the left, vignette top/bottom */}
           <div
@@ -57,23 +64,27 @@ export default function ShowsPage() {
             </StaggerItem>
             <StaggerItem>
               <h1 className="display mt-5 text-[clamp(2.4rem,7vw,5rem)] leading-[0.95]">
-                <span className="block text-white">Programming &amp;</span>
-                <span className="text-gradient-lime block">Shows</span>
+                {hero?.headline ? (
+                  <span className="block text-white">{hero.headline}</span>
+                ) : (
+                  <>
+                    <span className="block text-white">Programming &amp;</span>
+                    <span className="text-gradient-lime block">Shows</span>
+                  </>
+                )}
               </h1>
             </StaggerItem>
             <StaggerItem>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                Monsterous Radio delivers diverse 24/7 programming across Reggae, Lite Rock, Rock,
-                Pop and more — connecting listeners in the Philippines and North America with the
-                perfect soundtrack for every moment.
+                {hero?.body ||
+                  "Monsterous Radio delivers diverse 24/7 programming across Reggae, Lite Rock, Rock, Pop and more — connecting listeners in the Philippines and North America with the perfect soundtrack for every moment."}
               </p>
             </StaggerItem>
           </Stagger>
         </div>
       </section>
 
-      {/* ── Reference-style schedule grid + sidebar ── */}
-      <ShowsGrid />
+      <ShowsGrid shows={shows} />
 
       {/* ── Full interactive schedule ── */}
       <section

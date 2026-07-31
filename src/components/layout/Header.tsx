@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X, Radio, Phone, Mail } from "lucide-react";
 import { FacebookIcon } from "@/components/ui/BrandIcons";
-import { siteConfig } from "@/config/siteConfig";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import { resolveCmsImage } from "@/lib/cms/resolveImage";
 import { usePlayer } from "@/providers/PlayerProvider";
 import { Equalizer } from "@/components/animations/Equalizer";
 import { StatusStrip } from "./StatusStrip";
@@ -24,6 +25,8 @@ const NAV_LINKS = [
 ] as const;
 
 export function Header() {
+  const siteConfig = useSiteConfig();
+  const logoSrc = resolveCmsImage(siteConfig.logoUrl, "/brand/logo.png");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -63,12 +66,13 @@ export function Header() {
         <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Monsterous Radio — home">
             <Image
-              src="/brand/logo.png"
-              alt="Monsterous Radio logo"
+              src={logoSrc}
+              alt={`${siteConfig.name} logo`}
               width={150}
               height={56}
               priority
               className="h-11 w-auto object-contain"
+              unoptimized={logoSrc.startsWith("/api/uploads/")}
             />
           </Link>
 

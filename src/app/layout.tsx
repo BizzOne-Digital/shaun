@@ -3,11 +3,8 @@ import { Anton, Manrope, Caveat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { siteConfig } from "@/config/siteConfig";
-import { PlayerProvider } from "@/providers/PlayerProvider";
-import { LenisProvider } from "@/providers/LenisProvider";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { IntroOverlay } from "@/components/animations/IntroOverlay";
+import { SiteShell } from "@/components/layout/SiteShell";
+import { getRuntimeSiteConfig } from "@/lib/cms/runtimeConfig";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
@@ -80,9 +77,11 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const runtimeConfig = await getRuntimeSiteConfig();
+
   return (
     <html lang="en" className={`${anton.variable} ${manrope.variable} ${caveat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
@@ -94,16 +93,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <PlayerProvider>
-          <LenisProvider>
-            <IntroOverlay />
-            <Header />
-            <main id="main-content" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </LenisProvider>
-        </PlayerProvider>
+        <SiteShell config={runtimeConfig}>{children}</SiteShell>
       </body>
     </html>
   );

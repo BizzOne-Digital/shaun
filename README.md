@@ -49,7 +49,34 @@ streaming provider (usually ends in `.mp3`, `.aac` or `/stream`). Add it as
 `NEXT_PUBLIC_RADIO_STREAM_URL`, rebuild, and the persistent player, Listen Live page,
 homepage Live Now module and mobile menu all become playable instantly.
 
-## 4. Email Setup (Gmail SMTP)
+## 4b. Admin Panel (MongoDB CMS)
+
+1. Install and start **MongoDB** locally (or Atlas).
+2. Open **MongoDB Compass** and connect to:
+   `mongodb://127.0.0.1:27017`
+3. Add to `.env.local`:
+
+```env
+MONGODB_URI=mongodb://127.0.0.1:27017/monsterous-radio
+AUTH_SECRET=change-me-to-a-long-random-string
+ADMIN_EMAIL=admin@monsterousradio.com
+ADMIN_PASSWORD=MonsterousAdmin123!
+```
+
+4. Seed the database (admin user + all current site content):
+
+```bash
+npm run seed
+```
+
+5. Open **http://localhost:3000/admin/login** and sign in.
+
+Sidebar includes: **Dashboard · Pages · Shows · News · Schedule · Media · Site Settings**.  
+Each page has section-by-section editors (headline, body, image upload).  
+**Images are stored in MongoDB** (not `public/uploads`) so they work on Vercel.  
+URLs look like `/api/uploads/{folder}/{filename}`. Use the same `MONGODB_URI` (Atlas) on Vercel so uploads survive redeploys.
+
+
 
 1. On the sending Gmail account, turn on **2-Step Verification**.
 2. Create an [App Password](https://myaccount.google.com/apppasswords) (select

@@ -6,6 +6,7 @@ import { siteConfig } from "@/config/siteConfig";
 import { PageHero } from "@/components/layout/PageHero";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
+import { getCmsPage, getSection } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -14,18 +15,26 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteConfig.url}/contact` },
 };
 
-export default function ContactPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const page = await getCmsPage("contact");
+  const hero = getSection(page, "hero");
+
   return (
     <>
       <PageHero
         kicker="Get in Touch"
-        title={
+        title={hero?.headline || (
           <>
             Let&apos;s <span className="text-gradient-lime">Connect</span>
           </>
+        )}
+        description={
+          hero?.body ||
+          "A question, a campaign, a show idea or a partnership — pick your path and the right person will get back to you."
         }
-        description="A question, a campaign, a show idea or a partnership — pick your path and the right person will get back to you."
-        image="/studio/contact-hero.png"
+        image={hero?.image || "/studio/contact-hero.png"}
       />
 
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_minmax(300px,380px)] lg:px-8" aria-label="Contact form and details">

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { resolveCmsImage } from "@/lib/cms/resolveImage";
 
 interface ArtProps {
   from: string;
@@ -23,16 +24,19 @@ interface ShowArtworkProps {
  * no stock photos, ever.
  */
 export function ShowArtwork({ art, image, name, className = "", sizes, priority }: ShowArtworkProps) {
-  if (image) {
+  const resolved = image ? resolveCmsImage(image, "") : "";
+
+  if (resolved) {
     return (
       <div className={`relative overflow-hidden ${className}`}>
         <Image
-          src={image}
+          src={resolved}
           alt={`${name} show artwork`}
           fill
           sizes={sizes ?? "(max-width: 768px) 60vw, 320px"}
           priority={priority}
           className="object-cover"
+          unoptimized={resolved.startsWith("/api/uploads/")}
         />
       </div>
     );
