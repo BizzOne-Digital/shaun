@@ -41,7 +41,15 @@ export default function AdminNewsPage() {
   }
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+    fetch("/api/admin/news")
+      .then((r) => r.json())
+      .then((json) => {
+        if (!cancelled && json.ok) setArticles(json.articles);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function save() {

@@ -29,7 +29,15 @@ export default function AdminMediaPage() {
   }
 
   useEffect(() => {
-    void load();
+    let cancelled = false;
+    fetch("/api/upload")
+      .then((r) => r.json())
+      .then((json) => {
+        if (!cancelled && json.ok) setAssets(json.assets);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function onUpload(file: File | null) {

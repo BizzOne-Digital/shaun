@@ -37,15 +37,23 @@ export default function AdminShowsPage() {
   const [loading, setLoading] = useState(true);
 
   async function load() {
-    setLoading(true);
     const res = await fetch("/api/admin/shows");
     const json = await res.json();
     if (json.ok) setShows(json.shows);
-    setLoading(false);
   }
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+    fetch("/api/admin/shows")
+      .then((r) => r.json())
+      .then((json) => {
+        if (cancelled) return;
+        if (json.ok) setShows(json.shows);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function save() {

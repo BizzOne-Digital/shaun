@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 type Section = {
@@ -29,10 +29,6 @@ export function PageEditor({ initial }: { initial: PageDoc }) {
   const [page, setPage] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    setPage(initial);
-  }, [initial]);
 
   function updateSection(index: number, patch: Partial<Section>) {
     setPage((prev) => {

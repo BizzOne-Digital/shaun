@@ -21,30 +21,34 @@ export default function AdminSchedulePage() {
   const [raw, setRaw] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
     fetch("/api/admin/schedule")
       .then((r) => r.json())
       .then((json) => {
-        if (json.ok && json.schedule) {
-          setWeek(json.schedule.week);
-          setTimezoneLabel(json.schedule.timezoneLabel || "Philippine Time (GMT+8)");
-          setRaw(JSON.stringify(json.schedule.week, null, 2));
-        }
+        if (cancelled || !json.ok || !json.schedule) return;
+        setWeek(json.schedule.week);
+        setTimezoneLabel(json.schedule.timezoneLabel || "Philippine Time (GMT+8)");
+        setRaw(JSON.stringify(json.schedule.week, null, 2));
       });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  useEffect(() => {
-    if (week) setRaw(JSON.stringify(week, null, 2));
-  }, [week]);
+  function commitWeek(next: WeekSchedule) {
+    setWeek(next);
+    setRaw(JSON.stringify(next, null, 2));
+  }
 
   function updateBlock(index: number, patch: Partial<ScheduleBlock>) {
     if (!week) return;
     const blocks = week[day].map((b, i) => (i === index ? { ...b, ...patch } : b));
-    setWeek({ ...week, [day]: blocks });
+    commitWeek({ ...week, [day]: blocks });
   }
 
   function addBlock() {
     if (!week) return;
-    setWeek({
+    commitWeek({
       ...week,
       [day]: [...week[day], { start: "00:00", end: "01:00", showSlug: "" }],
     });
@@ -52,7 +56,7 @@ export default function AdminSchedulePage() {
 
   function removeBlock(index: number) {
     if (!week) return;
-    setWeek({ ...week, [day]: week[day].filter((_, i) => i !== index) });
+    commitWeek({ ...week, [day]: week[day].filter((_, i) => i !== index) });
   }
 
   async function save() {

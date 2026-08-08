@@ -24,5 +24,5 @@ export default async function AdminPageEditPage({
 
   if (!page) notFound();
 
-  return <PageEditor initial={page} />;
+  return <PageEditor key={page.slug} initial={page} />;
 }
