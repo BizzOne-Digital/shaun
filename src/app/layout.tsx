@@ -84,6 +84,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${anton.variable} ${manrope.variable} ${caveat.variable} h-full antialiased`}>
+      <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-765T16BP4N"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-765T16BP4N');
+          `}
+        </Script>
+      </head>
       <body className="flex min-h-full flex-col">
         <Script
           id="jsonld-station"
