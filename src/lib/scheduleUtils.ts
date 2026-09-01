@@ -1,6 +1,6 @@
 import { schedule, dayOrder, genericBlock } from "@/data/schedule";
 import { getShow } from "@/data/shows";
-import type { DayKey, ScheduleBlock } from "@/types";
+import type { DayKey, ScheduleBlock, Show, WeekSchedule } from "@/types";
 
 const PH_OFFSET_MINUTES = 8 * 60; // Asia/Manila is UTC+8, no DST
 
@@ -53,8 +53,13 @@ export interface ResolvedBlock extends ScheduleBlock {
   art: { from: string; to: string; accent: string; word: string; sub?: string };
 }
 
-export function resolveBlock(block: ScheduleBlock): ResolvedBlock {
-  const show = getShow(block.showSlug);
+function findShow(showSlug: string, shows?: Show[]): Show | undefined {
+  if (shows?.length) return shows.find((s) => s.slug === showSlug);
+  return getShow(showSlug);
+}
+
+export function resolveBlock(block: ScheduleBlock, shows?: Show[]): ResolvedBlock {
+  const show = findShow(block.showSlug, shows);
   if (show) {
     return {
       ...block,
@@ -76,8 +81,8 @@ export function resolveBlock(block: ScheduleBlock): ResolvedBlock {
   };
 }
 
-export function getDaySchedule(day: DayKey): ResolvedBlock[] {
-  return schedule[day].map(resolveBlock);
+export function getDaySchedule(day: DayKey, week: WeekSchedule = schedule, shows?: Show[]): ResolvedBlock[] {
+  return week[day].map((block) => resolveBlock(block, shows));
 }
 
 export interface LiveState {

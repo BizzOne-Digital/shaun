@@ -87,7 +87,10 @@ export default function AdminSchedulePage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white">Schedule</h2>
-          <p className="mt-1 text-sm text-white/50">Weekly blocks in Philippine Time (24h).</p>
+          <p className="mt-1 text-sm text-white/50">
+            Weekly blocks in Philippine Time (24h). This controls what appears on the Shows page grid
+            and full schedule — not the Shows editor alone.
+          </p>
         </div>
         <button type="button" className="admin-btn" onClick={save}>
           Save schedule
@@ -95,6 +98,15 @@ export default function AdminSchedulePage() {
       </div>
 
       {message && <p className="text-sm text-white/70">{message}</p>}
+
+      <div className="admin-card space-y-2 border-lime/20 bg-lime/5 text-sm text-white/75">
+        <p className="font-bold text-lime">Show slug must match a show in Admin → Shows</p>
+        <p>
+          Example: Sunday 9:00–14:00 with slug <code className="text-lime">golds</code> plays the Golds
+          show. Friday regular programming = use slugs like <code className="text-lime">the-daily-dose</code>,{" "}
+          <code className="text-lime">low-down</code>, etc. — copy slugs from the Shows list.
+        </p>
+      </div>
 
       <label className="admin-label max-w-md">
         Timezone label

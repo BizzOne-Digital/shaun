@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Globe, Search, AlertCircle } from "lucide-react";
-import { dayLabels, dayOrder } from "@/data/schedule";
-import type { DayKey } from "@/types";
+import { dayLabels, dayOrder, schedule as staticSchedule } from "@/data/schedule";
+import { shows as staticShows } from "@/data/shows";
+import type { DayKey, Show, WeekSchedule } from "@/types";
 import {
   formatTime,
   getDaySchedule,
@@ -16,15 +17,24 @@ import {
 } from "@/lib/scheduleUtils";
 import { Equalizer } from "@/components/animations/Equalizer";
 import { ShowArtwork } from "@/components/ui/ShowArtwork";
-import { shows } from "@/data/shows";
-
-const GENRE_FILTERS = ["All", ...Array.from(new Set(shows.map((s) => s.genre)))];
 
 /**
  * Interactive weekly schedule: seven day tabs, PHT/local toggle,
  * genre filter, show search, live-row glow and next-show countdown.
  */
-export function ScheduleExplorer() {
+export function ScheduleExplorer({
+  shows: showsProp,
+  weekSchedule: weekScheduleProp,
+}: {
+  shows?: Show[];
+  weekSchedule?: WeekSchedule;
+} = {}) {
+  const shows = showsProp?.length ? showsProp : staticShows;
+  const weekSchedule = weekScheduleProp ?? staticSchedule;
+  const genreFilters = useMemo(
+    () => ["All", ...Array.from(new Set(shows.map((s) => s.genre)))],
+    [shows],
+  );
   const [selectedDay, setSelectedDay] = useState<DayKey | null>(null);
   const [localTime, setLocalTime] = useState(false);
   const [genre, setGenre] = useState("All");
@@ -43,7 +53,7 @@ export function ScheduleExplorer() {
   }, []);
 
   const day: DayKey = selectedDay ?? "monday";
-  const blocks = useMemo(() => getDaySchedule(day), [day]);
+  const blocks = useMemo(() => getDaySchedule(day, weekSchedule, shows), [day, weekSchedule, shows]);
 
   const filtered = useMemo(() => {
     return blocks.filter((b) => {
@@ -54,7 +64,7 @@ export function ScheduleExplorer() {
         !q || b.name.toLowerCase().includes(q) || b.genre.toLowerCase().includes(q);
       return matchesGenre && matchesSearch;
     });
-  }, [blocks, genre, search]);
+  }, [blocks, genre, search, shows]);
 
   const isLive = (b: ResolvedBlock) =>
     now !== null &&
@@ -135,7 +145,7 @@ export function ScheduleExplorer() {
           />
         </div>
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-          {GENRE_FILTERS.map((g) => (
+          {genreFilters.map((g) => (
             <button
               key={g}
               type="button"

@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Stagger, StaggerItem } from "@/components/animations/Reveal";
 import { TopBannerAd } from "@/components/advertising";
 import { siteConfig } from "@/config/siteConfig";
-import { getCmsPage, getCmsShows, getSection } from "@/lib/cms/content";
+import { getCmsPage, getCmsShows, getCmsSchedule, getSection } from "@/lib/cms/content";
 import { resolveCmsImage } from "@/lib/cms/resolveImage";
 
 export const metadata: Metadata = {
@@ -20,7 +20,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ShowsPage() {
-  const [page, shows] = await Promise.all([getCmsPage("shows"), getCmsShows()]);
+  const [page, shows, weekSchedule] = await Promise.all([
+    getCmsPage("shows"),
+    getCmsShows(),
+    getCmsSchedule(),
+  ]);
   const hero = getSection(page, "hero");
   const heroImage = resolveCmsImage(hero?.image || "/studio/shows-hero.png", "/studio/shows-hero.png");
 
@@ -84,7 +88,7 @@ export default async function ShowsPage() {
         </div>
       </section>
 
-      <ShowsGrid shows={shows} />
+      <ShowsGrid shows={shows} weekSchedule={weekSchedule} />
 
       {/* ── Full interactive schedule ── */}
       <section
@@ -98,7 +102,7 @@ export default async function ShowsPage() {
           description="Browse every day, filter by genre, search shows and convert air times to your local timezone."
         />
         <div className="mt-10">
-          <ScheduleExplorer />
+          <ScheduleExplorer shows={shows} weekSchedule={weekSchedule} />
         </div>
       </section>
 

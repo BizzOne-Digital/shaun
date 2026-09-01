@@ -84,7 +84,13 @@ export default function AdminShowsPage() {
   }
 
   async function remove(slug: string) {
-    if (!confirm(`Delete show “${slug}”?`)) return;
+    if (
+      !confirm(
+        `Delete show “${slug}”?\n\nOnly delete after updating Schedule so no blocks use this slug. Consider unchecking Published instead.`,
+      )
+    ) {
+      return;
+    }
     await fetch(`/api/admin/shows?slug=${encodeURIComponent(slug)}`, { method: "DELETE" });
     setSelected(null);
     await load();
@@ -95,7 +101,9 @@ export default function AdminShowsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white">Shows</h2>
-          <p className="mt-1 text-sm text-white/50">Edit show copy, artwork and schedule summary.</p>
+          <p className="mt-1 text-sm text-white/50">
+            Edit show names, descriptions, artwork and the short schedule summary text.
+          </p>
         </div>
         <button type="button" className="admin-btn" onClick={() => setSelected(emptyShow())}>
           New show
@@ -103,6 +111,28 @@ export default function AdminShowsPage() {
       </div>
 
       {message && <p className="text-sm text-white/70">{message}</p>}
+
+      <div className="admin-card space-y-2 border-lime/20 bg-lime/5 text-sm text-white/75">
+        <p className="font-bold text-lime">How to swap or replace a show</p>
+        <ol className="list-decimal space-y-1 pl-5">
+          <li>
+            <strong>Shows</strong> (this page) = the show profile (name, genre, description, image).
+            Use <strong>New show</strong> or edit an existing one. Keep <strong>Published</strong> checked.
+          </li>
+          <li>
+            <strong>Schedule</strong> (sidebar) = which show airs at which time. Change the{" "}
+            <strong>show slug</strong> on each day/time block — e.g. swap Sunday from{" "}
+            <code className="text-lime">sunday-reggae-sunsplash</code> to <code className="text-lime">golds</code>.
+          </li>
+          <li>
+            Avoid <strong>Delete</strong> unless you have already updated Schedule. Deleting a show can
+            break the Shows page if the schedule or featured area still references that slug.
+          </li>
+          <li>
+            To hide a show from the lineup, uncheck <strong>Published</strong> instead of deleting it.
+          </li>
+        </ol>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         <div className="space-y-2">

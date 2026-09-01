@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Moon, Sparkles, Target, Users, RadioTower, Megaphone, ArrowRight } from "lucide-react";
 import { shows as staticShows } from "@/data/shows";
-import { schedule } from "@/data/schedule";
+import { schedule as staticSchedule } from "@/data/schedule";
 import { formatTime, resolveBlock } from "@/lib/scheduleUtils";
 import { ShowArtwork } from "@/components/ui/ShowArtwork";
 import { PanelHeader } from "@/components/ui/PanelHeader";
 import { Reveal } from "@/components/animations/Reveal";
 import { SideRail } from "@/components/home/SideRail";
-import type { DayKey, Show } from "@/types";
+import type { DayKey, Show, WeekSchedule } from "@/types";
 
 /** Featured show display meta (days + airtime shown on the cards). */
 const FEATURED: { slug: string; days: string; time: string }[] = [
@@ -24,12 +24,14 @@ function BlockCard({
   day,
   index,
   shows,
+  weekSchedule,
 }: {
   day: DayKey;
   index: number;
   shows: Show[];
+  weekSchedule: WeekSchedule;
 }) {
-  const block = resolveBlock(schedule[day][index]);
+  const block = resolveBlock(weekSchedule[day][index], shows);
   const show = shows.find((s) => s.slug === block.showSlug);
   const featured = FEATURED_SLUGS.has(block.showSlug);
 
@@ -79,10 +81,12 @@ function ProgrammingRow({
   label,
   day,
   shows,
+  weekSchedule,
 }: {
   label: string;
   day: DayKey;
   shows: Show[];
+  weekSchedule: WeekSchedule;
 }) {
   return (
     <div>
@@ -91,8 +95,8 @@ function ProgrammingRow({
         {label}
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {schedule[day].map((_, i) => (
-          <BlockCard key={`${day}-${i}`} day={day} index={i} shows={shows} />
+        {weekSchedule[day].map((_, i) => (
+          <BlockCard key={`${day}-${i}`} day={day} index={i} shows={shows} weekSchedule={weekSchedule} />
         ))}
       </div>
     </div>
@@ -104,12 +108,27 @@ function ProgrammingRow({
  * left — featured shows, weekday / Friday / weekend programming, advertise-by-show
  * strip · right — Top Hits, Listen Live promo, ad space.
  */
-export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
+export function ShowsGrid({
+  shows: showsProp,
+  weekSchedule: weekScheduleProp,
+}: { shows?: Show[]; weekSchedule?: WeekSchedule } = {}) {
   const shows = showsProp?.length ? showsProp : staticShows;
+  const weekSchedule = weekScheduleProp ?? staticSchedule;
   const featured = FEATURED.flatMap((f) => {
     const show = shows.find((s) => s.slug === f.slug);
     return show ? [{ ...f, show }] : [];
   });
+  const featuredShows =
+    featured.length > 0
+      ? featured
+      : shows.slice(0, 4).map((show) => ({
+          slug: show.slug,
+          days: show.scheduleSummary.split("·")[0]?.trim() || "Weekly",
+          time: show.scheduleSummary.includes("·")
+            ? show.scheduleSummary.split("·").slice(1).join("·").trim()
+            : show.scheduleSummary,
+          show,
+        }));
 
   return (
     <section
@@ -143,7 +162,7 @@ export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
           <Reveal>
             <PanelHeader title="Featured Shows" href="#full-schedule" linkLabel="Full Schedule" />
             <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {featured.map(({ show, days, time }) => (
+              {featuredShows.map(({ show, days, time }) => (
                 <Link
                   key={show.slug}
                   href={`/shows/${show.slug}`}
@@ -171,7 +190,7 @@ export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
           <Reveal delay={0.05}>
             <PanelHeader title="Weekday Programming" sub="(Mon – Thu)" />
             <div className="mt-4">
-              <ProgrammingRow label="Monday to Thursday" day="monday" shows={shows} />
+              <ProgrammingRow label="Monday to Thursday" day="monday" shows={shows} weekSchedule={weekSchedule} />
             </div>
           </Reveal>
 
@@ -179,7 +198,7 @@ export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
           <Reveal delay={0.05}>
             <PanelHeader title="Friday Programming" sub="(Golds all day)" />
             <div className="mt-4">
-              <ProgrammingRow label="Friday" day="friday" shows={shows} />
+              <ProgrammingRow label="Friday" day="friday" shows={shows} weekSchedule={weekSchedule} />
             </div>
           </Reveal>
 
@@ -187,8 +206,8 @@ export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
           <Reveal delay={0.05}>
             <PanelHeader title="Weekend Programming" sub="(Sat – Sun)" />
             <div className="mt-4 space-y-6">
-              <ProgrammingRow label="Saturday" day="saturday" shows={shows} />
-              <ProgrammingRow label="Sunday" day="sunday" shows={shows} />
+              <ProgrammingRow label="Saturday" day="saturday" shows={shows} weekSchedule={weekSchedule} />
+              <ProgrammingRow label="Sunday" day="sunday" shows={shows} weekSchedule={weekSchedule} />
             </div>
           </Reveal>
 
