@@ -1,4 +1,4 @@
-import { connectDb } from "@/lib/db";
+import { connectDb, isDbConfigured } from "@/lib/db";
 import { Page } from "@/models/Page";
 import { SiteSettings } from "@/models/SiteSettings";
 import { ShowModel } from "@/models/Show";
@@ -17,6 +17,7 @@ function lean<T>(doc: unknown): T | null {
 }
 
 export async function getSiteSettings() {
+  if (!isDbConfigured()) return siteConfig;
   try {
     await connectDb();
     const doc = await SiteSettings.findOne({ key: "main" }).lean();
@@ -28,6 +29,7 @@ export async function getSiteSettings() {
 }
 
 export async function getCmsPage(slug: string) {
+  if (!isDbConfigured()) return defaultPages().find((p) => p.slug === slug) ?? null;
   try {
     await connectDb();
     const doc = await Page.findOne({ slug }).lean();
@@ -39,6 +41,7 @@ export async function getCmsPage(slug: string) {
 }
 
 export async function getCmsPages() {
+  if (!isDbConfigured()) return defaultPages();
   try {
     await connectDb();
     const docs = await Page.find({}).sort({ title: 1 }).lean();
@@ -49,12 +52,33 @@ export async function getCmsPages() {
   return defaultPages();
 }
 
+function normalizeShow(doc: Show): Show {
+  const fallback = staticShows.find((s) => s.slug === doc.slug);
+  const art = doc.art?.from && doc.art?.to && doc.art?.accent && doc.art?.word
+    ? doc.art
+    : fallback?.art ?? {
+        from: "#53107a",
+        to: "#050407",
+        accent: "#b6e51d",
+        word: doc.name.slice(0, 12).toUpperCase(),
+        sub: doc.genre,
+      };
+
+  return {
+    ...fallback,
+    ...doc,
+    genres: doc.genres?.length ? doc.genres : fallback?.genres ?? [doc.genre],
+    art,
+  };
+}
+
 export async function getCmsShows(): Promise<Show[]> {
+  if (!isDbConfigured()) return staticShows;
   try {
     await connectDb();
     const docs = await ShowModel.find({ published: true }).sort({ order: 1, name: 1 }).lean();
     if (docs.length) {
-      return lean<Show[]>(docs)!;
+      return lean<Show[]>(docs)!.map(normalizeShow);
     }
   } catch (err) {
     console.warn("[CMS] shows fallback:", err);
@@ -63,6 +87,7 @@ export async function getCmsShows(): Promise<Show[]> {
 }
 
 export async function getCmsArticles(): Promise<Article[]> {
+  if (!isDbConfigured()) return staticArticles;
   try {
     await connectDb();
     const docs = await ArticleModel.find({ published: true }).sort({ date: -1 }).lean();
@@ -74,6 +99,7 @@ export async function getCmsArticles(): Promise<Article[]> {
 }
 
 export async function getCmsSchedule(): Promise<WeekSchedule> {
+  if (!isDbConfigured()) return staticSchedule;
   try {
     await connectDb();
     const doc = await ScheduleModel.findOne({ key: "weekly" }).lean();

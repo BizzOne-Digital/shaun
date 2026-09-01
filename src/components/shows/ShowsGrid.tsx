@@ -106,10 +106,10 @@ function ProgrammingRow({
  */
 export function ShowsGrid({ shows: showsProp }: { shows?: Show[] } = {}) {
   const shows = showsProp?.length ? showsProp : staticShows;
-  const featured = FEATURED.map((f) => ({
-    ...f,
-    show: shows.find((s) => s.slug === f.slug)!,
-  }));
+  const featured = FEATURED.flatMap((f) => {
+    const show = shows.find((s) => s.slug === f.slug);
+    return show ? [{ ...f, show }] : [];
+  });
 
   return (
     <section
