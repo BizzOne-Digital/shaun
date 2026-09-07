@@ -39,7 +39,7 @@ export const shows: Show[] = [
     tagline: "Easy rock and relaxing favorites.",
     description:
       "Low Down keeps things smooth with easy rock and relaxing favorites. Whether it is late night or a mellow afternoon, Low Down is the wind-down soundtrack of Monsterous Radio.",
-    scheduleSummary: "Mon–Sat 12:00 AM – 3:00 AM · Mon–Thu & Sat–Sun 2:00 PM – 6:00 PM",
+    scheduleSummary: "Mon–Sat 12:00 AM – 3:00 AM · Mon–Thu & Sat 2:00 PM – 6:00 PM · Fri 9:00 AM – 6:00 PM · Sun 2:00 PM – 6:00 PM",
     image: "/shows/low-down.png",
     art: { from: "#2d1b4e", to: "#050407", accent: "#a82de0", word: "LOW", sub: "DOWN" },
   },
@@ -51,7 +51,7 @@ export const shows: Show[] = [
     tagline: "Classic rock, rock and alternative — turned up.",
     description:
       "Rock This Time is where the amps stay warm. From classic rock anthems to modern alternative, this nightly block powers your evenings with riffs, energy and attitude.",
-    scheduleSummary: "Every night except Friday · 6:00 PM – 9:00 PM",
+    scheduleSummary: "Every night · 6:00 PM – 9:00 PM",
     image: "/shows/rock-this-time.png",
     art: { from: "#111111", to: "#3d0a52", accent: "#f8f6fb", word: "ROCK", sub: "THIS TIME" },
   },
@@ -62,22 +62,9 @@ export const shows: Show[] = [
     genres: ["70s", "80s", "Classic Hits"],
     tagline: "Solid gold — music from the 70s and 80s.",
     description:
-      "Every Friday, Golds takes over with twelve straight hours of certified classics from the 70s and 80s. Disco, new wave, soft rock and golden-era pop — all killer, no filler.",
-    scheduleSummary: "Friday 9:00 AM – 9:00 PM",
-    art: { from: "#f3c744", to: "#7a4a03", accent: "#050407", word: "GOLDS", sub: "70s & 80s" },
-  },
-  {
-    slug: "sunday-reggae-sunsplash",
-    name: "Sunday Reggae Sunsplash",
-    shortName: "Sunday Reggae",
-    genre: "Reggae",
-    genres: ["Reggae", "Island", "Tropical", "Ska"],
-    tagline: "Reggae, island, tropical and ska — every Sunday.",
-    description:
-      "Sunday Reggae Sunsplash turns every Sunday into an island escape. Five hours of reggae, tropical vibes, ska and sunshine rhythms to keep your weekend irie.",
+      "Every Sunday morning, Golds delivers five straight hours of certified classics from the 70s and 80s. Disco, new wave, soft rock and golden-era pop — all killer, no filler.",
     scheduleSummary: "Sunday 9:00 AM – 2:00 PM",
-    image: "/shows/sunday-reggae.png",
-    art: { from: "#1b8a3a", to: "#0a3d14", accent: "#f5e642", word: "SUNDAY", sub: "REGGAE" },
+    art: { from: "#f3c744", to: "#7a4a03", accent: "#050407", word: "GOLDS", sub: "70s & 80s" },
   },
   {
     slug: "the-weekend-blow-out",

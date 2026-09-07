@@ -121,8 +121,8 @@ export default function AdminShowsPage() {
           </li>
           <li>
             <strong>Schedule</strong> (sidebar) = which show airs at which time. Change the{" "}
-            <strong>show slug</strong> on each day/time block — e.g. swap Sunday from{" "}
-            <code className="text-lime">sunday-reggae-sunsplash</code> to <code className="text-lime">golds</code>.
+            <strong>show slug</strong> on each day/time block — e.g. set Sunday 9:00–14:00 to{" "}
+            <code className="text-lime">golds</code> for the Golds classics block.
           </li>
           <li>
             Avoid <strong>Delete</strong> unless you have already updated Schedule. Deleting a show can

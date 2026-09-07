@@ -6,8 +6,8 @@ import type { DayKey, ScheduleBlock, WeekSchedule } from "@/types";
  * ✅ Updated from the client's official color grid (July 2026):
  *    · Mon–Thu & Sat: The Daily Dose 6:00 AM – 2:00 PM
  *    · Fri & Sun:     The Daily Dose 6:00 AM – 9:00 AM
- *    · Friday:        Golds (70s & 80s) 9:00 AM – 9:00 PM
- *    · Sunday:        Sunday Reggae Sunsplash 9:00 AM – 2:00 PM,
+ *    · Friday:        Regular programming 9:00 AM – 9:00 PM (Low Down + Rock This Time)
+ *    · Sunday:        Golds (70s & 80s) 9:00 AM – 2:00 PM,
  *                     then Low Down 2:00 PM – 6:00 PM
  *    · Saturday:      The Weekend Blow Out 9:00 PM – 12:00 AM
  *                     (continues Sun 12:00 AM – 3:00 AM — overnight
@@ -15,7 +15,7 @@ import type { DayKey, ScheduleBlock, WeekSchedule } from "@/types";
  *                     24h continuity into Lite Heart at 3:00 AM)
  *    · Christian Contemporary nightly 9:00 PM – 12:00 AM (except Saturday)
  *    · Lite Heart daily 3:00 AM – 6:00 AM
- *    · Rock This Time every night except Friday · 6:00 PM – 9:00 PM
+ *    · Rock This Time every night · 6:00 PM – 9:00 PM
  *    · Low Down Mon–Thu & Sat–Sun 2:00 PM – 6:00 PM
  *      (+ overnight Mon–Sat 12:00 AM – 3:00 AM)
  *
@@ -40,7 +40,8 @@ export const schedule: WeekSchedule = {
     { start: "00:00", end: "03:00", showSlug: "low-down" },
     { start: "03:00", end: "06:00", showSlug: "lite-heart" },
     { start: "06:00", end: "09:00", showSlug: "the-daily-dose" },
-    { start: "09:00", end: "21:00", showSlug: "golds" },
+    { start: "09:00", end: "18:00", showSlug: "low-down" },
+    { start: "18:00", end: "21:00", showSlug: "rock-this-time" },
     { start: "21:00", end: "24:00", showSlug: "christian-contemporary" },
   ],
   saturday: [
@@ -60,7 +61,7 @@ export const schedule: WeekSchedule = {
     },
     { start: "03:00", end: "06:00", showSlug: "lite-heart" },
     { start: "06:00", end: "09:00", showSlug: "the-daily-dose" },
-    { start: "09:00", end: "14:00", showSlug: "sunday-reggae-sunsplash" },
+    { start: "09:00", end: "14:00", showSlug: "golds" },
     { start: "14:00", end: "18:00", showSlug: "low-down" },
     { start: "18:00", end: "21:00", showSlug: "rock-this-time" },
     { start: "21:00", end: "24:00", showSlug: "christian-contemporary" },

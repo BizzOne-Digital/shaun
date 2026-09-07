@@ -46,7 +46,7 @@ export const articles: Article[] = [
     body: [
       "A week on Monsterous Radio is designed to match your day. Early mornings belong to Lite Heart, three hours of love songs and ballads for the quiet hours before sunrise.",
       "From 6 AM, The Daily Dose takes over with monster hits from the 90s to today — the station's flagship daytime program. Afternoons wind down with Low Down's easy rock and relaxing favorites before Rock This Time turns the amps up each evening.",
-      "Fridays are special: Golds delivers twelve straight hours of 70s and 80s classics. Saturdays end with The Weekend Blow Out, a house party that runs deep into Sunday morning, and Sundays belong to the Sunday Reggae Sunsplash.",
+      "Fridays follow the regular weekday mix after the morning Daily Dose. Saturdays end with The Weekend Blow Out, a house party that runs deep into Sunday morning, and Sunday mornings belong to Golds — five hours of 70s and 80s classics.",
       "Most evenings close with Christian Contemporary, an uplifting way to end the day. Check the full schedule page for every time slot in Philippine Time and your local time.",
     ],
   },

@@ -45,7 +45,7 @@ export const events: RadioEvent[] = [
     venue: "White Beach",
     location: "Boracay, Philippines",
     description:
-      "A special edition of Sunday Reggae Sunsplash brought to you live from Boracay. Join us for sunset vibes, live reggae performances, and island beats by the shore.",
+      "A special live broadcast from Boracay. Join us for sunset vibes, live reggae performances, and island beats by the shore.",
     isDemo: true,
   },
 ];
