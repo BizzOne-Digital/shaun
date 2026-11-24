@@ -8,7 +8,7 @@ import { getCmsPage, getSection } from "@/lib/cms/content";
 export const metadata: Metadata = {
   title: "News & Features",
   description:
-    "Music news, station updates and features from Monsterous Radio — your 24/7 online radio station for the Philippines and North America.",
+    "Music news, station updates and features from Monsterous Radio, the 24/7 online station.",
   alternates: { canonical: `${siteConfig.url}/news` },
 };
 

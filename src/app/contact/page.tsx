@@ -9,9 +9,9 @@ import { Reveal } from "@/components/animations/Reveal";
 import { getCmsPage, getSection } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact: Submit Music & Shows",
   description:
-    "Contact Monsterous Radio — listener messages, advertising inquiries, show submissions, partnerships and technical support. Serving the Philippines and North America 24/7.",
+    "Contact Monsterous Radio to send a message, submit music, request a show or ask about advertising.",
   alternates: { canonical: `${siteConfig.url}/contact` },
 };
 

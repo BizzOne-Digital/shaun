@@ -11,9 +11,9 @@ import { getCmsPage, getCmsShows, getCmsSchedule, getSection } from "@/lib/cms/c
 import { resolveCmsImage } from "@/lib/cms/resolveImage";
 
 export const metadata: Metadata = {
-  title: "Shows & Schedule",
+  title: "Radio Shows & Weekly Schedule",
   description:
-    "Explore the full Monsterous Radio weekly schedule — every genre, every mood, every day. Live now indicators, Philippine Time and local time conversion.",
+    "See all Monsterous Radio shows and the weekly schedule in Philippine Time. Find your show and listen live.",
   alternates: { canonical: `${siteConfig.url}/shows` },
 };
 

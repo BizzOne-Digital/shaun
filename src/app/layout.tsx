@@ -42,7 +42,6 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ["/brand/logo.png"],
   },
-  alternates: { canonical: siteConfig.url },
   icons: { icon: "/brand/logo.png" },
 };
 

@@ -4,9 +4,9 @@ import { ListenExperience } from "@/components/player/ListenExperience";
 import { siteConfig } from "@/config/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Listen Live",
+  title: "Listen Live: Online Radio",
   description:
-    "Listen live to Monsterous Radio — 24/7 online radio streaming Pop, Rock, OPM, K-Pop, Reggae and more to the Philippines and North America.",
+    "Stream Monsterous Radio live online, 24/7. Pop, Rock, OPM, K-Pop and Reggae. Press play and listen free.",
   alternates: { canonical: `${siteConfig.url}/listen` },
 };
 

@@ -7,7 +7,7 @@ import { siteConfig } from "@/config/siteConfig";
 export const metadata: Metadata = {
   title: "Concerts & Events",
   description:
-    "Upcoming concerts, live performances and station events from Monsterous Radio — your 24/7 online radio station for the Philippines and North America.",
+    "Upcoming concerts, live performances and station events from Monsterous Radio, the 24/7 online station.",
   alternates: { canonical: `${siteConfig.url}/events` },
 };
 

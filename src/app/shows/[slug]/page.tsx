@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 import { Radio, Clock, Music2, ArrowLeft } from "lucide-react";
 import { getShow, getRelatedShows, shows } from "@/data/shows";
@@ -60,8 +61,35 @@ export default async function ShowDetailPage({
   const airtimes = getAirtimes(show.slug);
   const related = getRelatedShows(show.slug);
 
+  const showLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "RadioSeries",
+        name: show.name,
+        url: `${siteConfig.url}/shows/${show.slug}`,
+        description: show.tagline,
+        genre: show.genre,
+        provider: { "@type": "RadioStation", name: siteConfig.name, url: siteConfig.url },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: siteConfig.url },
+          { "@type": "ListItem", position: 2, name: "Shows", item: `${siteConfig.url}/shows` },
+          { "@type": "ListItem", position: 3, name: show.name },
+        ],
+      },
+    ],
+  };
+
   return (
     <>
+      <Script
+        id={`jsonld-show-${show.slug}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(showLd) }}
+      />
       <section className="noir-gradient grain relative overflow-hidden pt-[150px] pb-16">
         <div
           aria-hidden="true"

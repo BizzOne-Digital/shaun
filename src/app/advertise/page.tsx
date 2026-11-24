@@ -27,7 +27,7 @@ import type { AdFormat } from "@/types";
 export const metadata: Metadata = {
   title: "Advertise With Us",
   description:
-    "Advertise with Monsterous Radio — connect your business with a diverse 20–50 audience across the Philippines and North America through audio campaigns, show sponsorships and website placements.",
+    "Advertise on Monsterous Radio. Reach listeners aged 20–50 in the Philippines and North America with audio ads and show sponsorships.",
   alternates: { canonical: `${siteConfig.url}/advertise` },
 };
 

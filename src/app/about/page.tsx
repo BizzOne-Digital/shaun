@@ -19,9 +19,9 @@ import { Waveform } from "@/components/animations/Waveform";
 import { getCmsPage, getSection } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Monsterous Radio: Online Station",
   description:
-    "About Monsterous Radio — an international 24/7 online station built around variety, serving listeners in the Philippines, North America and beyond.",
+    "Learn about Monsterous Radio, an international 24/7 online station serving listeners in the Philippines and North America.",
   alternates: { canonical: `${siteConfig.url}/about` },
 };
 

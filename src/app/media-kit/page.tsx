@@ -10,7 +10,7 @@ import { Reveal } from "@/components/animations/Reveal";
 export const metadata: Metadata = {
   title: "Media Kit",
   description:
-    "Monsterous Radio media kit — station overview, programming, audience, advertising formats and sponsorship opportunities for brands and agencies.",
+    "Monsterous Radio media kit: station overview, audience, advertising formats and sponsorship options for brands.",
   alternates: { canonical: `${siteConfig.url}/media-kit` },
 };
 
